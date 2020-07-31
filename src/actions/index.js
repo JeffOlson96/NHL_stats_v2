@@ -1,5 +1,7 @@
 import history from '../helpers/history';
 import { userService } from '../services/user_service';
+import formatData from '../helpers/formatData';
+import formatTeamData from '../helpers/formatTeamData';
 
 export const increment = () => {
     return {
@@ -7,18 +9,56 @@ export const increment = () => {
     }
 }
 
+function fetchDataPending() {
+    return {
+        type: "FETCH_DATA_PENDING"
+    }
+}
+
+
+function fetchplayerDataSuccess(playerData) {
+    return {
+        type: "FETCH_PLAYER_DATA_SUCCESS",
+        playerData: playerData
+    }
+}
+
+function fetchteamDataSuccess(teamData) {
+    return {
+        type: "FETCH_TEAM_DATA_SUCCESS",
+        teamData: teamData
+    }
+}
+
+function fetchDataError(error) {
+    return {
+        type: "FETCH_DATA_ERROR",
+        error: error
+    }
+}
+
 
 export const fetchData = () => {
     return (dispatch) => {
-        return fetch("http://desktop-hv2qoiv:3000/players")
+       return fetch("http://desktop-hv2qoiv:3000/players")
             .then(res => {
-                //console.log(res);
-                return res.json()
+                return res.json();
             })
-            .then(json => dispatch(
-                {type: "FETCH_DATA", data: json}))
+            .then(body => dispatch(
+                {type: "FETCH_PLAYER_DATA_SUCCESS", playerData: body.recordset}))
             .catch(err => dispatch(
-                { type: "ERROR", msg: "Unable to fetch data "}))
+                { type: "ERROR", msg: "Unable to fetch data 1"}))
+            .then(() => {
+                fetch("http://desktop-hv2qoiv:3000/teams")
+                    .then(res => {
+                        return res.json();
+                    })
+                    .then(body => dispatch(
+                        { type: "FETCH_TEAM_DATA_SUCCESS", teamData: body.recordset}
+                    ))
+                    .catch(err => dispatch(
+                        {type: "ERROR", msg: "Unable to fetch data 2"}))
+            })
     }
 }
 

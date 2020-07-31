@@ -1,80 +1,71 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
-//import resPlayers from '../../staticData/NHL2017-18_format.csv';
-//import resTeam from  '../../staticData/nhl_team_data.csv';
-//import teamColors from '../../staticData/teamColors.json';
 import PlayerPieChart from './PlayerPieChart.js';
 import PlayerPopUp from './PlayerPopUp.js';
 import TeamRoster from './TeamRoster.js';
 import BarChart from './BarChart.js';
 import teamColors from '../../helpers/teamColors.json';
+import { fetchData } from "../../actions/index.js";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 
 
-export default class PieChart extends Component {
+
+
+class PieChartContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			playerData: null,
 			teamData: null,
 			formattedPlayers: null,
-			formattedTeam: null,
 			sendPlayerData: null,
 			sendTeamData: null,
 			showPopup: false,
 			pop_up_Player: null,
 			teamSend: null,
 			data_to_present: null,
-			popup_color: null
+			popup_color: null,
+			currentCheck: [],
+			limit: 1 // limit the number of checkboxes that user can check
 		};
 
 		
 		this.formatData = this.formatData.bind(this);
-		this.formatTeamData = this.formatTeamData.bind(this);
 		this.findAvgGoals = this.findAvgGoals.bind(this);
 		this.onPlayerBackClick = this.onPlayerBackClick.bind(this);
 		this.onPlayerDrillDown = this.onPlayerDrillDown.bind(this);
 		this.handleDataChange = this.handleDataChange.bind(this);
 	}
+	
 
 	componentDidMount() {
 		// this will be fullfilled by a get request but for now d3
 		//this.setState({data: resPlayers, teamData: resTeam});
-		var scope = this;
-
+		
+		//const dispatch = useDispatch();
 		// nested fetch allows for ALL data to load before trying
 		// to render
-		fetch("http://desktop-hv2qoiv:3000/players")
-			.then(res => {
-				return res.json();
-			})
-			.then(body => {
-				//console.log(body);
-				this.setState({playerData: body.recordset});
-				if (scope.state.playerData) { scope.formatData(); }
-			})
-			.then(() => {
-				fetch("http://desktop-hv2qoiv:3000/teams")
-					.then(res => {
-						return res.json();
-					})
-					.then(body => {
-						//console.log(body);
-						this.setState({teamData: body.recordset});
-						if (scope.state.teamData) { scope.formatTeamData(); }
-					});
-			})		
+		//console.log(this.props);
+		this.props.fetchData();
 	}
-	/*
+
+	
+	
 	componentDidUpdate(prevProps) {
 		// this is only for when we have change in data ie
-		if (prevProps.data !== this.props.data) {
-			this.setState((props) => ({data: this.props.data}));
-			//d3 remove
-			//drawChart again
+		//console.log(this.props);
+		if ((prevProps.playerData !== this.props.playerData) || (prevProps.teamData !== this.props.teamData)) {
+			
+			this.setState(() => ({playerData: this.props.playerData, teamData: this.props.teamData}));
+			
+			if (this.props.pending === false) {
+				this.formatData();
+			}
 		}
 	}
-	*/
+	
 	findAvgGoals(arr) {
 		var total = 0;
 		var avg;
@@ -84,6 +75,7 @@ export default class PieChart extends Component {
 		return avg;
 	}
 
+	
 	formatData() {
 		//console.log(this.state);
 		var scope = this;
@@ -109,7 +101,7 @@ export default class PieChart extends Component {
 							return v.G;
 						})
 					})
-					.entries(this.state.playerData);
+					.entries(this.props.playerData);
 		
 		tmpSend.forEach((d, i) => {
 			d.roster = [];
@@ -122,26 +114,21 @@ export default class PieChart extends Component {
 			});
 		});
 
-		this.setState({formattedPlayers: tmpSend, sendPlayerData: tmpSend});
-	}
 
-	formatTeamData() {
-		//console.log(this.state);
-		var scope = this;
-		var tmpData = this.state.sendPlayerData;
-		//if (tmpData) {
-		tmpData.forEach((team) => {
-			team.TeamInfo = this.state.teamData.find((d) => {
+		tmpSend.forEach((team) => {
+			team.TeamInfo = this.props.teamData.find((d) => {
 				return d.Abr === team.key;
 			});
 			team.colorInfo = teamColors.find((c) => {
 				return c.name === team.TeamInfo.Teamname;
 			});
 		});
-		console.log(tmpData);
-		this.setState({sendPlayerData: tmpData});
-		//}
+
+
+
+		this.setState({formattedPlayers: tmpSend, sendPlayerData: tmpSend});
 	}
+	
 
 	onPlayerBackClick = (e) => {
 		this.setState({sendPlayerData: this.state.formattedPlayers, showPopup: false, teamSend: null});
@@ -161,14 +148,15 @@ export default class PieChart extends Component {
 	};
 
 	handleDataChange = (e) => {
-		//console.log(this.state.data_to_present);
-		//console.log(e.type, e);
 		if (e.target.id === "goals") {
 			if (this.state.data_to_present === null) {
 				this.setState({data_to_present: e.target.id});
 			}
 			else if (this.state.data_to_present === e.target.id) {
 				this.setState({data_to_present: null});
+			}
+			else {
+				e.target.checked = false;
 			}
 			//this.setState({data_to_present: e.target.id});
 		}
@@ -179,6 +167,9 @@ export default class PieChart extends Component {
 			else if (this.state.data_to_present === e.target.id) {
 				this.setState({data_to_present: null});
 			}
+			else {
+				e.target.checked = false;
+			}
 		}
 		else if (e.target.id === "points") {
 			if (this.state.data_to_present === null) {
@@ -187,19 +178,23 @@ export default class PieChart extends Component {
 			else if (this.state.data_to_present === e.target.id) {
 				this.setState({data_to_present: null});
 			}
+			else {
+				e.target.checked = false;
+			}
 		}
 	};
 
 	render() {
 		// console.log(this.state.sendPlayerData);
-		//console.log(this.state.data_to_present);
-		var mystyle = {
+		//console.log(this.state);
+		//console.log(this.props);
+		var roster_style = {
 			transform: `translateX(700px)`,
 			zIndex: "1",
 			position: "absolute"
 		};
 
-		var mystyle2 = {
+		var bar_style = {
 			transform: `translate(100px, 500px)`,
 			zIndex: "1",
 			position: "absolute"
@@ -210,6 +205,7 @@ export default class PieChart extends Component {
 			position: 'absolute'
 		};
 		
+
 		return(
 			<div>
 				<h5>Goals by Team/Player</h5>
@@ -242,14 +238,14 @@ export default class PieChart extends Component {
 									onDrillDown={this.onPlayerDrillDown}
 								/>
 								{this.state.teamSend ?
-									<div id="roster" style={mystyle}>
+									<div id="roster" style={roster_style}>
 										<TeamRoster
 											team={this.state.teamSend}
 										/>
 									</div>
 									: null
 								}
-								<div id="bar" style={mystyle2}>
+								<div id="bar" style={bar_style}>
 									<h4>Bar Chart showing Team Total Goals</h4>
 									<BarChart
 										data={this.state.sendPlayerData}
@@ -263,3 +259,20 @@ export default class PieChart extends Component {
 		);
 	}
 }
+
+
+function mapStateToProps(state) {
+	//console.log(state);
+	return {
+		playerData: state.reducer.playerData,
+		teamData: state.reducer.teamData,
+		pending: state.reducer.pending,
+		error: state.reducer.error
+	}
+}
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+	fetchData: fetchData
+}, dispatch);
+
+export default connect(mapStateToProps, { fetchData })(PieChartContainer);

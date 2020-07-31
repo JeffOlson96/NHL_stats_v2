@@ -14,23 +14,7 @@ export default class TeamColorBars extends Component {
         //this.setState({colorArr: this.props.color_arr});
         this.drawBars(this.props.color_arr.hex);
     }
-    /*
-    componentDidUpdate(prevProps) {
-        //console.log("CHECK: ", prevProps, this.props)
-        d3.selectAll(".teamBars").remove();
-        if (prevProps.color_arr !== this.props.color_arr) {
-            //this.setState({colorArr: this.props.color_arr});
-            console.log(this.props.color_arr);
-            
-            if (this.props.color_arr.hex) {
-                this.drawBars(this.props.color_arr.hex);
-            }
-            else if (this.props.color_arr) {
-                this.drawBars(this.props.color_arr);
-            }
-        }
-    }
-    */
+    
     componentWillUnmount() {
         d3.selectAll(".teamBars").remove();
     }
@@ -61,7 +45,7 @@ export default class TeamColorBars extends Component {
                     .attr("width", 14)
                     .attr("height", 50)
                     .attr("fill", function(d) {
-                        console.log(d);
+                        //console.log(d);
                         return "#"+d;
                     });
         }
