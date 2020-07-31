@@ -3,11 +3,6 @@ import { userService } from '../services/user_service';
 import formatData from '../helpers/formatData';
 import formatTeamData from '../helpers/formatTeamData';
 
-export const increment = () => {
-    return {
-        type: "INCREMENT"
-    }
-}
 
 function fetchDataPending() {
     return {
