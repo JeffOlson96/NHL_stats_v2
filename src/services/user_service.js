@@ -21,7 +21,7 @@ export const userService = {
 
 
 function handleResponse(response) {
-    
+    // handle response from express server, if response is okay then return data, else error handling
     return response.text().then(text => {
         const data = text && JSON.parse(text);
         console.log(data);
