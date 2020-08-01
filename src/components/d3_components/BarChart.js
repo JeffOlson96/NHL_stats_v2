@@ -100,8 +100,9 @@ export default class BarChart extends Component {
     const svg = d3.select("#bar")
       .append("svg")
       .attr("class", "bar")
-      .attr("width", 800)
-      .attr("height", 800);
+      .attr("width", 600)
+      .attr("height", 600);
+      //.attr("transform", "translateX(100px)");
 
 
     var x = d3.scaleBand()
@@ -244,7 +245,7 @@ export default class BarChart extends Component {
       })
       .attr("font-size", "8px");
 
-    svg.attr("transform", "translate(-100, -200)");
+    svg.attr("transform", "translate(-50, -200)");
     scope.setState({avgLeagueGoals: findAverage(data)});
   }
   /*

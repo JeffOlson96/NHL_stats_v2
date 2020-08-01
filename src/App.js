@@ -11,6 +11,7 @@ import { PrivateRoute } from './helpers/PrivateRoute';
 import Header from './components/style_comps/Header';
 import LandingPage from './components/routes/LandingPage';
 
+
 //const dispatch = useDispatch();
 
 /*
@@ -30,7 +31,7 @@ class App extends Component {
   render () {
     
     return (
-      <div className="app_container">
+      <div className="app_container" style={{backgroundColor: "#e6fffa"}}>
         {/*this.props.data ?
           <h1>{this.props.data.recordset[10].H_Ref_Name}</h1>
           : "Loading..."
@@ -38,6 +39,7 @@ class App extends Component {
           <Redirect from="/" to="/login" />
         */}
         <Header />
+        
         <Router history={history}>
           <Switch>
             <Route exact path="/" component={LandingPage} />

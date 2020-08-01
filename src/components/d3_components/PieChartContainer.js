@@ -17,18 +17,15 @@ class PieChartContainer extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			playerData: null,
-			teamData: null,
-			formattedPlayers: null,
-			sendPlayerData: null,
-			sendTeamData: null,
-			showPopup: false,
-			pop_up_Player: null,
-			teamSend: null,
-			data_to_present: null,
-			popup_color: null,
-			currentCheck: [],
-			limit: 1 // limit the number of checkboxes that user can check
+			playerData: null, // original variables for holding data
+			teamData: null, // ^^
+			formattedPlayers: null, // after preprocessing
+			sendPlayerData: null, // used for d3 event callback
+			showPopup: false, // bool for showing popup
+			pop_up_Player: null, // player object set on d3 callback
+			teamSend: null, // object for roster component
+			data_to_present: null, // checkbox holder for goals, assists or points
+			popup_color: null, // object for popup colors
 		};
 
 		
@@ -41,25 +38,19 @@ class PieChartContainer extends Component {
 	
 
 	componentDidMount() {
-		// this will be fullfilled by a get request but for now d3
-		//this.setState({data: resPlayers, teamData: resTeam});
-		
-		//const dispatch = useDispatch();
-		// nested fetch allows for ALL data to load before trying
-		// to render
-		//console.log(this.props);
+		// call action to dispatch data fetch
 		this.props.fetchData();
 	}
 
 	
 	
 	componentDidUpdate(prevProps) {
-		// this is only for when we have change in data ie
-		//console.log(this.props);
+		// component update for preprocessing
 		if ((prevProps.playerData !== this.props.playerData) || (prevProps.teamData !== this.props.teamData)) {
 			
 			this.setState(() => ({playerData: this.props.playerData, teamData: this.props.teamData}));
 			
+			// check for pending because pending is only set after 2nd get
 			if (this.props.pending === false) {
 				this.formatData();
 			}
@@ -77,7 +68,7 @@ class PieChartContainer extends Component {
 
 	
 	formatData() {
-		//console.log(this.state);
+		// preprocessing to use d3 nest and rollup to format data into correctly formatted object
 		var scope = this;
 
 		const getTeamName = (d) => {
@@ -90,7 +81,7 @@ class PieChartContainer extends Component {
 		}
 
 		var totPlayers = [];
-
+		// d3 nest and rollup using sum to make total values of either goals, assists or points
 		var tmpSend = d3.nest()
 					.key(function(d) {
 						return getTeamName(d);
@@ -102,7 +93,7 @@ class PieChartContainer extends Component {
 						})
 					})
 					.entries(this.props.playerData);
-		
+		// form roster
 		tmpSend.forEach((d, i) => {
 			d.roster = [];
 			totPlayers.forEach((p, j) => {
@@ -114,7 +105,7 @@ class PieChartContainer extends Component {
 			});
 		});
 
-
+		// set team info and colorinfo
 		tmpSend.forEach((team) => {
 			team.TeamInfo = this.props.teamData.find((d) => {
 				return d.Abr === team.key;
@@ -131,13 +122,15 @@ class PieChartContainer extends Component {
 	
 
 	onPlayerBackClick = (e) => {
+		// callback for clicking the back button
 		this.setState({sendPlayerData: this.state.formattedPlayers, showPopup: false, teamSend: null});
 		
 	};
 
 	onPlayerDrillDown = (e) => {
+		// callback for clicking on slice of pie
 		//console.log("DrillDown: ", e);
-		//console.log(this.state);
+		
 		if (e.data.roster) {
 			this.setState({sendPlayerData: e.data.roster, teamSend: e.data, popup_color: e.data.colorInfo.colors});
 		}
@@ -188,6 +181,9 @@ class PieChartContainer extends Component {
 		// console.log(this.state.sendPlayerData);
 		//console.log(this.state);
 		//console.log(this.props);
+		// different styles to format page
+		// this is a container for all of the components cause it stores the data,
+		// 
 		var roster_style = {
 			transform: `translateX(700px)`,
 			zIndex: "1",
@@ -195,9 +191,10 @@ class PieChartContainer extends Component {
 		};
 
 		var bar_style = {
-			transform: `translate(100px, 500px)`,
+			transform: `translate(0px, 500px)`,
 			zIndex: "1",
-			position: "absolute"
+			position: "absolute",
+			backgroundColor: "#e6fffa"
 		};
 
 		var popup_style = {
@@ -205,14 +202,15 @@ class PieChartContainer extends Component {
 			position: 'absolute'
 		};
 		
+		
 
 		return(
-			<div>
+			<div style={{transform: "translateX(300px)", backgroundColor: "#e6fffa", width: "600px"}}>
 				<h5>Goals by Team/Player</h5>
 				<p>Click to drill down and view player stats</p>
 				{
 					this.state.sendPlayerData ?
-						<div id="playerpie">
+						<div id="playerpie" style={{backgroundColor: "#e6fffa"}}>
 							<div id="checkBoxes">
 								<input type="checkbox" id="goals" name="goals" value="Goals" onChange={this.handleDataChange}/>
 								<label htmlFor="goals"> Goals</label><br></br>
@@ -230,13 +228,15 @@ class PieChartContainer extends Component {
 								</div>
 							: null
 							}
-							<div className="charts" style={{transform: "translateY(0px)"}}>
+							<div className="charts" style={{transform: "translateY(0px)", backgroundColor: "#e6fffa"}}>
 								<h4>Pie Chart Showing Total Team Goals</h4>
-								<PlayerPieChart
-									data={this.state.sendPlayerData}
-									onBackClick={this.onPlayerBackClick}
-									onDrillDown={this.onPlayerDrillDown}
-								/>
+								<div id="pie" style={{backgroundColor: "#e6fffa"}}>
+									<PlayerPieChart
+										data={this.state.sendPlayerData}
+										onBackClick={this.onPlayerBackClick}
+										onDrillDown={this.onPlayerDrillDown}
+									/>
+								</div>
 								{this.state.teamSend ?
 									<div id="roster" style={roster_style}>
 										<TeamRoster
@@ -261,6 +261,7 @@ class PieChartContainer extends Component {
 }
 
 
+
 function mapStateToProps(state) {
 	//console.log(state);
 	return {
@@ -271,8 +272,6 @@ function mapStateToProps(state) {
 	}
 }
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-	fetchData: fetchData
-}, dispatch);
+// connect used to subscribe to redux store
 
 export default connect(mapStateToProps, { fetchData })(PieChartContainer);

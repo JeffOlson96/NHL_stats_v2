@@ -24,6 +24,7 @@ function handleResponse(response) {
     
     return response.text().then(text => {
         const data = text && JSON.parse(text);
+        console.log(data);
         if (!response.ok) {
             if (response.status === 401) {
                 if (response.statusText === "Username/Password does not match") {

@@ -31,6 +31,7 @@ export default class PlayerPopUp extends Component {
 			fontSize: "75%",
 			color: "black"
 		};
+		console.log(this.state);
 		/*
 		var background_style = {
 			backgroundColor: this.state.teamColors[0]
@@ -45,7 +46,7 @@ export default class PlayerPopUp extends Component {
 						<h4 style={headerStyle}>{this.state.playerData.data.Team}</h4>
 						<h5 style={headerStyle}>{this.state.playerData.data.Position}</h5>
 						<TeamColorBars color_arr={this.state.teamColors}/>
-						<Table bordered hover size="sm" variant="light">
+						<Table bordered hover size="sm" variant="dark">
 							<thead>
 								<tr>
 									<th>GP</th>
@@ -56,10 +57,10 @@ export default class PlayerPopUp extends Component {
 							</thead>
 							<tbody>
 								<tr>
-									<th style={{color: "black"}}>{this.state.playerData.data.GP}</th>
-									<th style={{color: "black"}}>{this.state.playerData.data.G}</th>
-									<th style={{color: "black"}}>{this.state.playerData.data.A}</th>
-									<th style={{color: "black"}}>{this.state.playerData.data.PTS}</th>
+									<th style={{color: "white"}}>{this.state.playerData.data.GP}</th>
+									<th style={{color: "white"}}>{this.state.playerData.data.G}</th>
+									<th style={{color: "white"}}>{this.state.playerData.data.A}</th>
+									<th style={{color: "white"}}>{this.state.playerData.data.PTS}</th>
 								</tr>
 							</tbody>
 						</Table>

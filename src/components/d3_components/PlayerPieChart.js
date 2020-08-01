@@ -21,9 +21,6 @@ export default class PlayerPieChart extends Component {
 
 
     componentDidMount() {
-		//console.log(JSON.stringify(this.props.data));
-		//const path = "../../staticData/output.json";
-		//fs.writeFile(path, JSON.stringify(JSON.parse(this.props.data)));
       	this.setState((props) => ({rawData: this.props.data}));
     	this.drawChart(this.props.data);
     }
@@ -47,7 +44,7 @@ export default class PlayerPieChart extends Component {
 			d3.selectAll(".playerpie").remove();
 		}
 		
-    drawChart(data) {
+    	drawChart(data) {
 
 			var scope = this;
 
@@ -67,25 +64,26 @@ export default class PlayerPieChart extends Component {
 			var arc = d3.arc().outerRadius(radius-10).innerRadius(radius-100);
 			
 			var pie = d3.pie()
-							.sort(null)
-							.value(function(d) {
-								// logic for data drilling
-								if (d.value) {
-									return d.value;
-								}
-								else if (d.G) {
-									return d.G;
-								}
-							});
+						.sort(null)
+						.value(function(d) {
+							// logic for data drilling
+							if (d.value) {
+								return d.value;
+							}
+							else if (d.G) {
+								return d.G;
+							}
+						});
 			
-			const svg = d3.select("#playerpie")
-										.append("svg")
-										.attr("class", "playerpie")
-										.attr("width", 600)
-										.attr("height", 500)
-										.attr("style", "position:absolute")
-										.append("g")
-										.attr("transform", "translate(300,240)");
+			const svg = d3.select("#pie")
+							.append("svg")
+							.attr("class", "playerpie")
+							.attr("width", 600)
+							.attr("height", 500)
+							.attr("style", "position:absolute")
+							.append("g")
+							.attr("transform", "translate(300,240)");
+							//.attr("background-color", "#e6fffa");
 			
 			svg.append("text")
 					.style("text-anchor", "middle")
