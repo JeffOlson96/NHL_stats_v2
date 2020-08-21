@@ -12,17 +12,25 @@ function Home() {
     const user_style = {
         //transform: "translate(300px,0px)",
         textAlign: "right",
-        position: "absolute"
+        position: "absolute",
+        zIndex: "2",
+        
+    }
+    const home_style = {
+        width: "100%",
+        height: "200%",
+        position: "absolute",
+        backgroundColor: "#e6fffa"
     }
     return (
-        <div className="home_container">
+        <div className="home_container" style={home_style}>
             {/*<SideBar />*/}
             <div className="col-lg-8 offset-lg-2" style={user_style}>
                 <h3>Hi {userData.user.Username}!</h3>
-                <p>
+                <div>
                     <Link to="/login">Logout</Link>
                     <p>link to update profile/reset password</p>
-                </p>
+                </div>
                 
             </div>
             <PieChartContainer />

@@ -101,7 +101,7 @@ export default class BarChart extends Component {
       .append("svg")
       .attr("class", "bar")
       .attr("width", 600)
-      .attr("height", 600);
+      .attr("height", 700);
       //.attr("transform", "translateX(100px)");
 
 
@@ -245,7 +245,7 @@ export default class BarChart extends Component {
       })
       .attr("font-size", "8px");
 
-    svg.attr("transform", "translate(-50, -200)");
+    svg.attr("transform", "translate(0, -200)");
     scope.setState({avgLeagueGoals: findAverage(data)});
   }
   /*

@@ -58,11 +58,30 @@ export default class PlayerPieChart extends Component {
 					colorSet.push(tmpColor);
 			});
 
-
+			
 			var color = d3.scaleOrdinal().domain(data).range(d3.schemeSet3);
 			// create arc for pie/donut chart
 			var arc = d3.arc().outerRadius(radius-10).innerRadius(radius-100);
-			
+
+			/*
+			const arcTween = (a) => {
+				var i = d3.interpolate(this._current, a);
+				this._current = i(0);
+				return ((t) => arc(i(t)));
+			}
+
+			const labelarcTween = (a) => {
+				var i = d3.interpolate(this._current, a);
+				this._current = i(0);
+				return ((t) => {
+					let coord = arc.centroid(i(t));
+
+					coord[0] *= 1.5;
+					coord[1] *= 1.5;
+					return "translate(" + coord + ")";
+				})
+			}
+			*/
 			var pie = d3.pie()
 						.sort(null)
 						.value(function(d) {
@@ -81,9 +100,10 @@ export default class PlayerPieChart extends Component {
 							.attr("width", 600)
 							.attr("height", 500)
 							.attr("style", "position:absolute")
+							.attr("style", "background-color: #e6fffa")
 							.append("g")
 							.attr("transform", "translate(300,240)");
-							//.attr("background-color", "#e6fffa");
+							
 			
 			svg.append("text")
 					.style("text-anchor", "middle")
@@ -96,11 +116,11 @@ export default class PlayerPieChart extends Component {
 						}
 					})
 					.attr("transform", "translate(0,10)");
+					
 				
 			var g = svg.selectAll(".arc").data(pie(data)).enter().append("g").attr("class", "arc");
 
 			g.append("path")
-				.attr("d", arc)
 				.style("fill", function(d) {
 					//console.log(d);
 					if(d.data.key) {
@@ -109,14 +129,26 @@ export default class PlayerPieChart extends Component {
 					else if (d.data.H_Ref_Name) {
 						return color(d.data.H_Ref_Name);
 					}
-				})
-				.on("click", function(d) {
+				})// transition stuff
+				.transition().delay(function(d, i) {
+					return i * 100;
+				}).duration(100)
+				.attrTween("d", function(d) {
+					var i = d3.interpolate(d.startAngle, d.endAngle);
+					return function(t) {
+						d.endAngle = i(t);
+						return arc(d);
+					}
+				});// interactive stuff
+			g.on("click", function(d) {
 					scope.props.onDrillDown(d);
 					scope.setState({clicked: d, depth: scope.state.depth+=1});
+					//change();
 					if (d.data.roster) {
 						d3.selectAll(".playerpie").remove();
 						scope.drawChart(d.data.roster);
 					}
+					
 				})
 				.on("mouseover", function(d) {
 					d3.select(this).style("opacity", 0.5);
@@ -144,6 +176,8 @@ export default class PlayerPieChart extends Component {
 					d3.select(this).style("opacity", 1);
 					d3.selectAll(".val").remove();
 				});
+				
+				//.transition().duration(500).attrTween("d", arcTween);
 							
 			g.append("text")
 				.attr("transform", function(d,i) {
@@ -167,7 +201,11 @@ export default class PlayerPieChart extends Component {
 					}
 				})
 				.attr("font-size", "8px");
-					
+				//.each(function(d) { this._current = d; });
+			
+			//svg.style("background-color", "#e6fffa");
+			
+			
 		}
 		
 		render() {

@@ -54,7 +54,7 @@ export default class TeamColorBars extends Component {
     render() {
         var color_style = {
             position: "absolute",
-            transform: "translate(100px, -100px)"
+            transform: "translate(75px, -100px)"
         }
         return(<div className="teamBars" style={color_style}></div>);
     }

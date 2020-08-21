@@ -55,7 +55,7 @@ class App extends Component {
 
 
 const mapStatetoProps = (state) => {
-  return { num: state.num, data: state.data, error: state.error }
+  return { data: state.data, error: state.error }
 }
 
 const mapDispatchtoProps = (dispatch) => {

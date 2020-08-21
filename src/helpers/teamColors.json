@@ -45,7 +45,7 @@
     "name": "Chicago Blackhawks",
     "league": "nhl",
     "colors": {
-      "hex"   :   ["010101", "ff671f", "ffd100", "001871", "c8102e", "00843d", "cc8a00"]
+      "hex"   :   ["010101", "ff671f", "ffd100", "c8102e", "00843d", "cc8a00"]
     }
   },
   {

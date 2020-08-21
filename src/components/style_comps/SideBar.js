@@ -7,7 +7,7 @@ export default function SideBar() {
     const sidebar_style = {
         backgroundColor: "#ccffcc",
         position: "absolute",
-        zOrder: 0,
+        zOrder: 2,
         width: "290px"
     }
     return (

@@ -141,6 +141,7 @@ class PieChartContainer extends Component {
 	};
 
 	handleDataChange = (e) => {
+		console.log(e);
 		if (e.target.id === "goals") {
 			if (this.state.data_to_present === null) {
 				this.setState({data_to_present: e.target.id});
@@ -185,40 +186,42 @@ class PieChartContainer extends Component {
 		// this is a container for all of the components cause it stores the data,
 		// 
 		var roster_style = {
-			transform: `translateX(700px)`,
-			zIndex: "1",
+			transform: `translate(700px, -500px)`,
+			zIndex: "2",
 			position: "absolute"
 		};
 
 		var bar_style = {
-			transform: `translate(0px, 500px)`,
+			width: "100%",
+			transform: `translate(0px, 0px)`,
 			zIndex: "1",
 			position: "absolute",
 			backgroundColor: "#e6fffa"
 		};
 
 		var popup_style = {
-			transform: 'translate(350px, -150px)',
-			position: 'absolute'
+			transform: 'translate(-250px, 150px)',
+			position: 'absolute',
+			zIndex: "2"
 		};
 		
 		
 
 		return(
-			<div style={{transform: "translateX(300px)", backgroundColor: "#e6fffa", width: "600px"}}>
+			<div style={{transform: "translateX(300px)", backgroundColor: "#e6fffa", width: "100%"}}>
 				<h5>Goals by Team/Player</h5>
 				<p>Click to drill down and view player stats</p>
 				{
 					this.state.sendPlayerData ?
 						<div id="playerpie" style={{backgroundColor: "#e6fffa"}}>
+						{/*
 							<div id="checkBoxes">
-								<input type="checkbox" id="goals" name="goals" value="Goals" onChange={this.handleDataChange}/>
-								<label htmlFor="goals"> Goals</label><br></br>
 								<input type="checkbox" id="assists" name="assists" value="Assists" onChange={this.handleDataChange}/>
-								<label htmlFor="assists"> Assists</label><br></br>
+									<label htmlFor="assists">Assists</label><br></br>
 								<input type="checkbox" id="points" name="points" value="Points" onChange={this.handleDataChange}/>
-								<label htmlFor="points"> Points</label>
+									<label htmlFor="points">Points</label>
 							</div>
+						*/}
 							{this.state.showPopup ?
 								<div id="popup" style={popup_style}>
 									<PlayerPopUp

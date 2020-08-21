@@ -26,7 +26,9 @@ export default class TeamRoster extends Component {
     render() {
 		//console.log(this.state.team);
 		var tablestyle = {
-			height: "200px",
+			display: "block",
+			width: "2000px",
+			height: "500px",
 			overflowY: "scroll"
 		};
 		if (this.state.team) {
@@ -40,7 +42,7 @@ export default class TeamRoster extends Component {
 					this.state.team ?
 						<div id="TeamRoster" className="col-3" >
 							<h5>{this.state.team.TeamInfo.Teamname}</h5>
-							<Table striped bordered hover variant="dark" size="sm" >
+							<Table striped bordered hover variant="dark" size="sm" style={tablestyle}>
 								<thead>
 									<tr>
 										<th>Name</th>

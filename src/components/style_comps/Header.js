@@ -4,12 +4,9 @@ import TeamLogo from '../images/TeamLogo.png';
 
 
 export default class Header extends Component {
-	constructor(props) {
-		super(props);
-	}
-	
 	render() {
 		const head_style = {
+			height: "70px",
 			textAlign: "center",
 			fontFize: "15px",
 			color: "black",
